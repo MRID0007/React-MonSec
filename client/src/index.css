@@ -12,6 +12,44 @@ code {
     monospace;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+
+body {
+  font-family: ui-monospace, SFMono-Regular, "sf mono", Menlo, Monaco, "cascadia code", monospace;
+}
+
+/* Custom styles for the slick dots */
+.slick-dots.custom-dots {
+  position: absolute;
+  bottom: 20px; /* Adjust this value as needed */
+  width: 100%;
+  display: flex !important;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.slick-dots.custom-dots li {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 0;
+}
+
+.slick-dots.custom-dots li button {
+  width: 8px;
+  height: 8px;
+  background: rgb(167, 139, 250); /* Default dot color */
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.slick-dots.custom-dots li.slick-active button {
+  background: rgb(52, 211, 153); /* Active dot color */
+}

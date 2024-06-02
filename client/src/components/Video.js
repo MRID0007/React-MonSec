@@ -3,8 +3,8 @@ import React from 'react';
 const Video = () => (
   <div className="flex justify-center my-8">
     <iframe
-      width="645"
-      height="363"
+      width="560"
+      height="315"
       src="https://www.youtube.com/embed/BnJ31tEuZtM"
       title="Monash Cybersecurity Club (MonSec) - Information Technology | Clubs and Societies"
       frameBorder="0"
