@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const TOC = () => {
+const TOC = ({ items }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleTOC = () => {
@@ -25,15 +26,25 @@ const TOC = () => {
         <div className="relative">
           <div className="absolute top-0 left-0 w-0.5 bg-neutral-800 h-full translate-y-0.5"></div>
           <ul className="toc text-neutral-300 mt-4">
-            <li className="mb-2 pl-2 relative"><a href="#introduction" className="hover:underline text-white">Introduction</a></li>
-            <li className="mb-2 pl-2 relative"><a href="#weekly-workshop" className="hover:underline text-white">Weekly Workshop</a></li>
-            <li className="mb-2 pl-2 relative"><a href="#competitions" className="hover:underline text-white">Competitions</a></li>
-            <li className="mb-2 pl-2 relative"><a href="#other" className="hover:underline text-white">Other</a></li>
+            {items.map((item, index) => (
+              <li key={index} className="mb-2 pl-2 relative">
+                <a href={item.href} className="hover:text-purple-500">{item.label}</a>
+              </li>
+            ))}
           </ul>
         </div>
       )}
     </div>
   );
+};
+
+TOC.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      href: PropTypes.string.isRequired
+    })
+  ).isRequired
 };
 
 export default TOC;

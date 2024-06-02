@@ -6,7 +6,7 @@ import RecentPublications from '../components/RecentPublications';
 import CurrentEvents from '../components/CurrentEvents';
 import Sponsors from '../components/Sponsors';
 import Footer from '../components/Footer';
-import ScrollToTop from '../components/ScrollToTop';  // Import the new component
+import ScrollToTop from '../components/ScrollToTop';
 
 const Home = () => {
   return (
@@ -18,7 +18,7 @@ const Home = () => {
       <RecentPublications />
       <Sponsors />
       <Footer />
-      <ScrollToTop />  // Add the new component
+      <ScrollToTop />
     </div>
   );
 };

@@ -26,10 +26,10 @@ const Header = () => {
           <li className={`border-b border-neutral-700 ${location.pathname === '/about' ? 'bg-primary-500' : ''}`}><Link to="/about" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>About</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/competitions' ? 'bg-primary-500' : ''}`}><Link to="/competitions" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Competitions</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/contact' ? 'bg-primary-500' : ''}`}><Link to="/contact" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Contact</Link></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>CTFd↗</a></li>
+          <li className="border-b border-neutral-700"><a href="https://ctf.monsec.io/" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>CTFd↗</a></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/join' ? 'bg-primary-500' : ''}`}><Link to="/join" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Join</Link></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Member Highlights</a></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Posts</a></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/MemberHighlights' ? 'bg-primary-500' : ''}`}><Link to="/MemberHighlights" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>MemberHighlights</Link></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/Posts' ? 'bg-primary-500' : ''}`}><Link to="/Posts" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Posts</Link></li>
           <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Resources</a></li>
           <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Sponsorships</a></li>
           <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Team</a></li>

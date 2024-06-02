@@ -5,6 +5,13 @@ import ScrollToTop from '../components/ScrollToTop';
 import TOC from '../components/TOC';
 import agmImage from '../assets/images/agm_2022_hud1b05a0828a1fd51b679a1cc5ebfdef1_792214_1320x0_resize_q75_box.jpg';
 
+const aboutTOCItems = [
+  { label: 'Introduction', href: '#introduction' },
+  { label: 'Weekly Workshop', href: '#weekly-workshop' },
+  { label: 'Competitions', href: '#competitions' },
+  { label: 'Other', href: '#other' }
+];
+
 const About = () => {
   const copyToClipboard = (e) => {
     const codeBlock = e.target.parentNode.querySelector('code').innerText;
@@ -24,7 +31,7 @@ const About = () => {
           <h1 className="text-4xl font-bold mb-4">About Us</h1>
           <p className="update-info text-neutral-400 mb-4">Updated: 2024-02-11 <span className="dot text-primary-500">·</span> 228 words <span className="dot text-primary-500">·</span> 2 mins</p>
           
-          <TOC />
+          <TOC items={aboutTOCItems} />
 
           <h2 id="introduction" className="text-2xl font-bold mt-8 mb-4">Introduction</h2>
           <p>Welcome to MonSec, a <strong>student-run club</strong> at Monash University dedicated to the teachings of <strong>practical</strong> cybersecurity skills.</p>
