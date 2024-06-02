@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logo from '../assets/images/monsec-logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import logo from '../assets/images/monsec-logo.png';
+import { UserContext } from '../contexts/UserContext';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -20,11 +22,12 @@ const Header = () => {
         </Link>
       </div>
       <nav className="relative flex items-center">
-        <button onClick={toggleMenu} className="text-neutral-50 text-xl focus:outline-none">
+        <button onClick={toggleMenu} className="text-neutral-50 text-xl focus:outline-none mr-4">
           ☰
         </button>
-        <Link to="/login" className="text-neutral-50 text-xl ml-4">
+        <Link to={user ? "/account" : "/login"} className="text-neutral-50 text-xl focus:outline-none">
           <FontAwesomeIcon icon={faUser} />
+          {user && <span className="ml-2">{user.username}</span>}
         </Link>
         <ul className={`fixed top-0 left-0 w-full h-full bg-neutral-800 text-neutral-50 transition-transform duration-300 z-50 ${menuOpen ? 'block' : 'hidden'}`}>
           <li className={`border-b border-neutral-700 ${location.pathname === '/' ? 'bg-primary-500' : ''}`}><Link to="/" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Home</Link></li>
@@ -33,10 +36,10 @@ const Header = () => {
           <li className={`border-b border-neutral-700 ${location.pathname === '/contact' ? 'bg-primary-500' : ''}`}><Link to="/contact" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Contact</Link></li>
           <li className="border-b border-neutral-700"><a href="https://ctf.monsec.io/" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>CTFd↗</a></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/join' ? 'bg-primary-500' : ''}`}><Link to="/join" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Join</Link></li>
-          <li className={`border-b border-neutral-700 ${location.pathname === '/MemberHighlights' ? 'bg-primary-500' : ''}`}><Link to="/MemberHighlights" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>MemberHighlights</Link></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/MemberHighlights' ? 'bg-primary-500' : ''}`}><Link to="/MemberHighlights" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Member Highlights</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/Posts' ? 'bg-primary-500' : ''}`}><Link to="/Posts" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Posts</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/Resources' ? 'bg-primary-500' : ''}`}><Link to="/Resources" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Resources</Link></li>
-          <li className={`border-b border-neutral-700 ${location.pathname === '/Sponsorships' ? 'bg-primary-500' : ''}`}><Link to="/Sponsorships" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>sponsorships</Link></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/Sponsorships' ? 'bg-primary-500' : ''}`}><Link to="/Sponsorships" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Sponsorships</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/Teams' ? 'bg-primary-500' : ''}`}><Link to="/Teams" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Teams</Link></li>
         </ul>
       </nav>

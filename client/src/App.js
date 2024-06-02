@@ -17,30 +17,37 @@ import WorkshopRecordings from './posts/WorkshopRecordings';
 import Sponsorships from './pages/Sponsorships';
 import Teams from './pages/Teams';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Account from './pages/Account'; // Import the Account component
+import { UserContextProvider } from './contexts/UserContext';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/competitions" element={<Competitions />} />
-        <Route path="/join" element={<Join />} />
-        <Route path="/MemberHighlights" element={<MemberHighlights />} />
-        <Route path="/posts" element={<Posts />} />
-        <Route path="/posts/sql-injection" element={<SqlInjectionPost />} />
-        <Route path="/posts/email-security" element={<EmailSecurityPost />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/posts/leos-notes" element={<LeosNotes />} />
-        <Route path="/posts/elias-notes" element={<EliasNotes />} />
-        <Route path="/posts/kali-linux-setup" element={<KaliLinuxSetup />} />
-        <Route path="/posts/workshop-recordings" element={<WorkshopRecordings />} />
-        <Route path="/sponsorships" element={<Sponsorships />} />
-        <Route path="/Teams" element={<Teams />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
+    <UserContextProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/competitions" element={<Competitions />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/MemberHighlights" element={<MemberHighlights />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/posts/sql-injection" element={<SqlInjectionPost />} />
+          <Route path="/posts/email-security" element={<EmailSecurityPost />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/posts/leos-notes" element={<LeosNotes />} />
+          <Route path="/posts/elias-notes" element={<EliasNotes />} />
+          <Route path="/posts/kali-linux-setup" element={<KaliLinuxSetup />} />
+          <Route path="/posts/workshop-recordings" element={<WorkshopRecordings />} />
+          <Route path="/sponsorships" element={<Sponsorships />} />
+          <Route path="/Teams" element={<Teams />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/account" element={<Account />} /> {/* Add account route */}
+        </Routes>
+      </Router>
+    </UserContextProvider>
   );
 };
 
