@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
@@ -22,6 +23,7 @@ const postsData = [
         readTime: 8,
         tags: ['2024', "Sarah's Intro to WebSec", 'SQLi'],
         image: sqlInjectionImage,
+        link: '/posts/sql-injection',
       },
       {
         title: 'A Crash Course in e-mail Security',
@@ -31,6 +33,7 @@ const postsData = [
         readTime: 6,
         tags: ['2024', 'SMTP', 'IMAP', 'DNS', 'SPF', 'DKIM', 'DMARC'],
         image: emailSecurityImage,
+        link: '/posts/email-security',
       },
     ],
   },
@@ -127,7 +130,15 @@ const Posts = () => {
                 <div className="flex mb-8" key={post.title}>
                   <img src={post.image} alt={post.title} className="w-48 h-48 rounded mr-4" />
                   <div>
-                    <h3 className="text-xl font-bold">{post.title}</h3>
+                    <h3 className="text-xl font-bold">
+                      {post.link ? (
+                        <Link to={post.link} className="hover:underline">
+                          {post.title}
+                        </Link>
+                      ) : (
+                        post.title
+                      )}
+                    </h3>
                     <p className="text-neutral-400 mb-2">
                       {post.date} <span className="dot text-primary-500">·</span> Updated: {post.updated} <span className="dot text-primary-500">·</span> {post.words} words
                     </p>

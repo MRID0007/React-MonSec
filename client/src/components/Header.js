@@ -30,9 +30,9 @@ const Header = () => {
           <li className={`border-b border-neutral-700 ${location.pathname === '/join' ? 'bg-primary-500' : ''}`}><Link to="/join" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Join</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/MemberHighlights' ? 'bg-primary-500' : ''}`}><Link to="/MemberHighlights" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>MemberHighlights</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/Posts' ? 'bg-primary-500' : ''}`}><Link to="/Posts" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Posts</Link></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Resources</a></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Sponsorships</a></li>
-          <li className="border-b border-neutral-700"><a href="#" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Team</a></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/Resources' ? 'bg-primary-500' : ''}`}><Link to="/Resources" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Resources</Link></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/Sponsorships' ? 'bg-primary-500' : ''}`}><Link to="/Sponsorships" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>sponsorships</Link></li>
+          <li className={`border-b border-neutral-700 ${location.pathname === '/Teams' ? 'bg-primary-500' : ''}`}><Link to="/Teams" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Teams</Link></li>
         </ul>
       </nav>
     </header>
