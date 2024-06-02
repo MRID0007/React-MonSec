@@ -7,6 +7,7 @@ const SignUp = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
@@ -15,8 +16,16 @@ const SignUp = () => {
       console.log(response.data);
       navigate('/login');
     } catch (error) {
-      console.error('Error signing up', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage('Error signing up');
+      }
     }
+  };
+
+  const closeErrorPopup = () => {
+    setErrorMessage('');
   };
 
   return (
@@ -51,6 +60,16 @@ const SignUp = () => {
           <Link to="/login" className="text-purple-500">Back to Login</Link>
         </div>
       </div>
+      {errorMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg text-center">
+            <p className="text-red-600">{errorMessage}</p>
+            <button onClick={closeErrorPopup} className="mt-4 bg-purple-500 text-white py-2 px-4 rounded">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

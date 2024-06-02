@@ -13,12 +13,10 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/login', { email, password });
-      const user = response.data.user;
-      const token = response.data.token;
-      setUser(user); // Update the user context
-      localStorage.setItem('user', JSON.stringify(user)); // Store user details in local storage
-      localStorage.setItem('token', token); // Store token in local storage
-      navigate('/'); // Redirect to the home page
+      const { user, token } = response.data;
+      setUser(user); // Update context
+      localStorage.setItem('token', token); // Store the token if needed for authentication
+      navigate('/');
     } catch (error) {
       console.error('Error logging in', error);
     }
