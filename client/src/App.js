@@ -16,6 +16,7 @@ import KaliLinuxSetup from './posts/KaliLinuxSetup';
 import WorkshopRecordings from './posts/WorkshopRecordings';
 import Sponsorships from './pages/Sponsorships';
 import Teams from './pages/Teams';
+import Login from './pages/Login';
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="/posts/workshop-recordings" element={<WorkshopRecordings />} />
         <Route path="/sponsorships" element={<Sponsorships />} />
         <Route path="/Teams" element={<Teams />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

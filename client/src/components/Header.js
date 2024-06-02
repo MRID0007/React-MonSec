@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import logo from '../assets/images/monsec-logo.png';
 
 const Header = () => {
@@ -17,10 +19,13 @@ const Header = () => {
           <img src={logo} alt="MonSec Logo" className="w-12 transition-transform duration-300 hover:scale-110" />
         </Link>
       </div>
-      <nav className="relative">
+      <nav className="relative flex items-center">
         <button onClick={toggleMenu} className="text-neutral-50 text-xl focus:outline-none">
           ☰
         </button>
+        <Link to="/login" className="text-neutral-50 text-xl ml-4">
+          <FontAwesomeIcon icon={faUser} />
+        </Link>
         <ul className={`fixed top-0 left-0 w-full h-full bg-neutral-800 text-neutral-50 transition-transform duration-300 z-50 ${menuOpen ? 'block' : 'hidden'}`}>
           <li className={`border-b border-neutral-700 ${location.pathname === '/' ? 'bg-primary-500' : ''}`}><Link to="/" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>Home</Link></li>
           <li className={`border-b border-neutral-700 ${location.pathname === '/about' ? 'bg-primary-500' : ''}`}><Link to="/about" className="block py-4 px-6 hover:bg-primary-500" onClick={toggleMenu}>About</Link></li>
