@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { UserContext } from '../contexts/UserContext';
 import Footer from '../components/Footer';
+import { UserContext } from '../contexts/UserContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,13 +19,16 @@ const Login = () => {
       navigate('/');
     } catch (error) {
       console.error('Error logging in', error);
-      alert('Invalid credentials. Please try again.');
+      alert('Error logging in. Please try again.');
     }
   };
 
   return (
     <div className="min-h-screen bg-neutral-900 text-neutral-50 flex flex-col justify-center items-center">
-      <div className="w-full max-w-sm bg-neutral-800 p-8 rounded-lg shadow-md">
+      <div className="w-full max-w-sm relative bg-neutral-800 p-8 rounded-lg shadow-md">
+        <Link to="/" className="absolute top-4 right-4 text-neutral-50 text-xl">
+          <FontAwesomeIcon icon={faTimes} />
+        </Link>
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <input
           type="email"
@@ -43,7 +48,7 @@ const Login = () => {
           Login
         </button>
         <div className="mt-4 text-center">
-          <a href="/signup" className="text-purple-500">Sign Up</a>
+          <Link to="/signup" className="text-purple-500">Sign Up</Link>
         </div>
       </div>
       <Footer />

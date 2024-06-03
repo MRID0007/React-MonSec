@@ -27,7 +27,7 @@ const Footer = () => (
       <div className="text-neutral-400">
         <p>© 2024 MonSec</p>
         <p>ABN 61 940 766 256</p>
-        <p>Powered by Hugo & Congo</p>
+        <p>Powered by React</p>
       </div>
     </div>
   </footer>

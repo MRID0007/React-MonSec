@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { User } = require('./models');
+const { User, Event, EventSignup } = require('./models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -25,7 +25,8 @@ app.post('/signup', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ username, email, password: hashedPassword, avatar });
-    res.status(201).json({ message: 'User created successfully', user: newUser });
+    const token = jwt.sign({ id: newUser.id }, 'your_jwt_secret', { expiresIn: '1h' });
+    res.status(201).json({ message: 'User created successfully', user: newUser, token });
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ message: 'Server error' });
@@ -80,6 +81,44 @@ app.put('/users/:id', async (req, res) => {
     res.json({ user });
   } catch (error) {
     console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Create Event Route
+app.post('/events', async (req, res) => {
+  const { title, description, date } = req.body;
+
+  try {
+    const newEvent = await Event.create({ title, description, date });
+    res.status(201).json({ message: 'Event created successfully', event: newEvent });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get Events Route
+app.get('/events', async (req, res) => {
+  try {
+    const events = await Event.findAll();
+    res.json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Event Signup Route
+app.post('/events/:eventId/signup', async (req, res) => {
+  const { eventId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const newSignup = await EventSignup.create({ eventId, userId });
+    res.status(201).json({ message: 'Signup successful', signup: newSignup });
+  } catch (error) {
+    console.error('Error signing up for event:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

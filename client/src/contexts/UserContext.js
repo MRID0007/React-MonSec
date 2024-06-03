@@ -1,9 +1,8 @@
-// src/contexts/UserContext.js
 import React, { createContext, useState, useEffect } from 'react';
 
 export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
+export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -29,5 +28,3 @@ const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-
-export default UserProvider;
