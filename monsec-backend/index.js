@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { User, Event, EventSignup } = require('./models');
+const { User, EventSignup, Event } = require('./models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 const app = express();
 const PORT = 3001;
@@ -17,7 +18,6 @@ app.post('/signup', async (req, res) => {
   const { username, email, password, avatar } = req.body;
 
   try {
-    // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -85,40 +85,66 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
-// Create Event Route
-app.post('/events', async (req, res) => {
-  const { title, description, date } = req.body;
-
-  try {
-    const newEvent = await Event.create({ title, description, date });
-    res.status(201).json({ message: 'Event created successfully', event: newEvent });
-  } catch (error) {
-    console.error('Error creating event:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Get Events Route
-app.get('/events', async (req, res) => {
-  try {
-    const events = await Event.findAll();
-    res.json(events);
-  } catch (error) {
-    console.error('Error fetching events:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 // Event Signup Route
 app.post('/events/:eventId/signup', async (req, res) => {
-  const { eventId } = req.params;
   const { userId } = req.body;
+  const { eventId } = req.params;
 
   try {
-    const newSignup = await EventSignup.create({ eventId, userId });
-    res.status(201).json({ message: 'Signup successful', signup: newSignup });
+    const existingSignup = await EventSignup.findOne({ where: { userId, eventId } });
+    if (existingSignup) {
+      return res.status(400).json({ message: 'User is already signed up for this event' });
+    }
+
+    const eventSignup = await EventSignup.create({ userId, eventId });
+    res.status(201).json({ message: 'Event signup successful', eventSignup });
   } catch (error) {
     console.error('Error signing up for event:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get User's Past and Future Events
+app.get('/users/:id/events', async (req, res) => {
+  const { id } = req.params;
+  const now = new Date();
+
+  try {
+    const pastEvents = await EventSignup.findAll({
+      where: { userId: id },
+      include: [{ model: Event, as: 'Event', where: { date: { [Op.lt]: now } } }]
+    });
+
+    const futureEvents = await EventSignup.findAll({
+      where: { userId: id },
+      include: [{ model: Event, as: 'Event', where: { date: { [Op.gt]: now } } }]
+    });
+
+    res.json({
+      pastEvents: pastEvents.map(signup => ({ ...signup.toJSON(), event: signup.Event.toJSON() })),
+      futureEvents: futureEvents.map(signup => ({ ...signup.toJSON(), event: signup.Event.toJSON() }))
+    });
+  } catch (error) {
+    console.error('Error fetching user events:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Event Cancel Route
+app.delete('/events/:eventId/cancel', async (req, res) => {
+  const { userId } = req.body;
+  const { eventId } = req.params;
+
+  try {
+    const eventSignup = await EventSignup.findOne({ where: { userId, eventId } });
+    if (!eventSignup) {
+      return res.status(404).json({ message: 'Event signup not found' });
+    }
+
+    await eventSignup.destroy();
+    res.status(200).json({ message: 'Event signup canceled' });
+  } catch (error) {
+    console.error('Error canceling event signup:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

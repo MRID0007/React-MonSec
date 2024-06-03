@@ -1,56 +1,54 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+// src/pages/Events.js
+import React, { useState } from 'react';
+import events from '../data/events';
+import EventModal from '../components/EventModal';
+import { useContext } from 'react';
 import { UserContext } from '../contexts/UserContext';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ScrollToTop from '../components/ScrollToTop';
 
 const Events = () => {
-  const [events, setEvents] = useState([]);
   const { user } = useContext(UserContext);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/events');
-        setEvents(response.data);
-      } catch (error) {
-        console.error('Error fetching events', error);
-      }
-    };
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+  };
 
-    fetchEvents();
-  }, []);
-
-  const handleSignup = async (eventId) => {
-    try {
-      await axios.post(`http://localhost:3001/events/${eventId}/signup`, { userId: user.id });
-      alert('Signed up successfully');
-    } catch (error) {
-      console.error('Error signing up for event', error);
-      alert('Failed to sign up');
-    }
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-neutral-50 flex flex-col justify-center items-center">
-      <h2 className="text-2xl font-bold mb-4">Events</h2>
-      <div className="w-80">
-        {events.map((event) => (
-          <div key={event.id} className="mb-4 p-4 bg-neutral-800 rounded">
-            <h3 className="text-xl font-bold">{event.title}</h3>
-            <p className="text-neutral-400">{event.description}</p>
-            <p className="text-neutral-400">{new Date(event.date).toLocaleString()}</p>
-            {user && (
-              <button
-                onClick={() => handleSignup(event.id)}
-                className="bg-purple-500 text-white py-2 px-4 rounded mt-2"
-              >
-                Sign Up
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen bg-neutral-900 text-neutral-50">
+      <Header />
+      <main className="p-4">
+        <h1 className="text-4xl font-bold mb-8">Events</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {events.map((event) => (
+            <div key={event.id} className="bg-neutral-800 rounded-lg overflow-hidden shadow-lg">
+              <img src={event.image} alt={event.name} className="w-full h-48 object-cover" />
+              <div className="p-4">
+                <h2 className="text-2xl font-bold mb-2">{event.name}</h2>
+                <p className="text-neutral-400 mb-2">{event.date}</p>
+                <p className="text-neutral-400 mb-4">{event.price}</p>
+                <button 
+                  onClick={() => handleEventClick(event)} 
+                  className="bg-purple-500 text-white py-2 px-4 rounded"
+                >
+                  View Event
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {selectedEvent && (
+          <EventModal event={selectedEvent} user={user} onClose={handleCloseModal} />
+        )}
+      </main>
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };

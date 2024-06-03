@@ -1,21 +1,22 @@
-'use strict';
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class EventSignup extends Model {
     static associate(models) {
-      EventSignup.belongsTo(models.User, { foreignKey: 'userId' });
-      EventSignup.belongsTo(models.Event, { foreignKey: 'eventId' });
+      this.belongsTo(models.Event, { as: 'Event', foreignKey: 'eventId' });
     }
   }
 
-  EventSignup.init({
-    userId: DataTypes.INTEGER,
-    eventId: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'EventSignup',
-  });
+  EventSignup.init(
+    {
+      userId: DataTypes.INTEGER,
+      eventId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: 'EventSignup',
+    }
+  );
 
   return EventSignup;
 };

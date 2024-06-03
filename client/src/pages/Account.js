@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -14,7 +14,25 @@ const Account = () => {
   const [email, setEmail] = useState(user?.email || '');
   const [password, setPassword] = useState('');
   const [avatar, setAvatar] = useState(user?.avatar || avatars[0]);
+  const [pastEvents, setPastEvents] = useState([]);
+  const [futureEvents, setFutureEvents] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/users/${user.id}/events`);
+        setPastEvents(response.data.pastEvents);
+        setFutureEvents(response.data.futureEvents);
+      } catch (error) {
+        console.error('Error fetching user events:', error);
+      }
+    };
+
+    if (user) {
+      fetchEvents();
+    }
+  }, [user]);
 
   const handleLogout = () => {
     setUser(null);
@@ -27,12 +45,21 @@ const Account = () => {
         username,
         email,
         password,
-        avatar
+        avatar,
       });
       setUser(response.data.user);
       setEditing(false);
     } catch (error) {
       console.error('Error updating profile', error);
+    }
+  };
+
+  const handleRemoveEvent = async (eventId) => {
+    try {
+      await axios.delete(`http://localhost:3001/events/${eventId}/cancel`, { data: { userId: user.id } });
+      setFutureEvents(futureEvents.filter(event => event.event.id !== eventId));
+    } catch (error) {
+      console.error('Error removing event', error);
     }
   };
 
@@ -104,6 +131,36 @@ const Account = () => {
         <button onClick={handleLogout} className="bg-red-500 text-white py-2 px-4 rounded w-full">
           Logout
         </button>
+      </div>
+      <div className="w-full max-w-sm bg-neutral-800 p-8 mt-4 rounded-lg shadow-md">
+        <h3 className="text-xl font-bold mb-4">Future Events</h3>
+        {futureEvents.length === 0 ? (
+          <p>No future events.</p>
+        ) : (
+          futureEvents.map(({ event }) => (
+            <div key={event.id} className="mb-2">
+              <p>{event.name} - {new Date(event.date).toLocaleDateString()}</p>
+              <button
+                onClick={() => handleRemoveEvent(event.id)}
+                className="bg-red-500 text-white py-1 px-2 rounded mt-1"
+              >
+                Remove
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="w-full max-w-sm bg-neutral-800 p-8 mt-4 rounded-lg shadow-md">
+        <h3 className="text-xl font-bold mb-4">Past Events</h3>
+        {pastEvents.length === 0 ? (
+          <p>No past events.</p>
+        ) : (
+          pastEvents.map(({ event }) => (
+            <div key={event.id} className="mb-2">
+              <p>{event.name} - {new Date(event.date).toLocaleDateString()}</p>
+            </div>
+          ))
+        )}
       </div>
       <Footer />
     </div>

@@ -1,17 +1,18 @@
-'use strict';
-const { Model } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-  class Event extends Model {
-    static associate(models) {
-      Event.hasMany(models.EventSignup, { foreignKey: 'eventId' });
-    }
-  }
-
+module.exports = (sequelize) => {
+  class Event extends Model {}
+  
   Event.init({
-    title: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    date: DataTypes.DATE
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: DataTypes.STRING,
+    date: DataTypes.DATE,
+    price: DataTypes.STRING,
+    image: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Event',

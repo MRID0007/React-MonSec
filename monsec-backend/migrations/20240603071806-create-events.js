@@ -2,28 +2,28 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('EventSignups', {
+    await queryInterface.createTable('Events', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      eventId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Events',
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
+      date: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      price: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      image: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -37,6 +37,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('EventSignups');
+    await queryInterface.dropTable('Events');
   }
 };
