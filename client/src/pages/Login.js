@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import Footer from '../components/Footer';
@@ -13,19 +13,18 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/login', { email, password });
-      const { user, token } = response.data;
-      setUser(user); // Update context
-      localStorage.setItem('token', token); // Store the token if needed for authentication
+      setUser(response.data.user);
       navigate('/');
     } catch (error) {
       console.error('Error logging in', error);
+      alert('Invalid credentials. Please try again.');
     }
   };
 
   return (
     <div className="min-h-screen bg-neutral-900 text-neutral-50 flex flex-col justify-center items-center">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <div className="w-80">
+      <div className="w-full max-w-sm bg-neutral-800 p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
         <input
           type="email"
           value={email}
@@ -44,7 +43,7 @@ const Login = () => {
           Login
         </button>
         <div className="mt-4 text-center">
-          <Link to="/signup" className="text-purple-500">Sign Up</Link>
+          <a href="/signup" className="text-purple-500">Sign Up</a>
         </div>
       </div>
       <Footer />

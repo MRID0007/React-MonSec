@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     ctfRanking: DataTypes.INTEGER,
+    avatar: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',

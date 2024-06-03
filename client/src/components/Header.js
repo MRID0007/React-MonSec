@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/images/monsec-logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../contexts/UserContext';
 
 const Header = () => {
@@ -25,8 +25,16 @@ const Header = () => {
         <button onClick={toggleMenu} className="text-neutral-50 text-xl focus:outline-none mr-4">
           ☰
         </button>
-        <Link to={user ? "/account" : "/login"} className="text-neutral-50 text-xl focus:outline-none">
-          <FontAwesomeIcon icon={faUser} />
+        <Link to={user ? "/account" : "/login"} className="text-neutral-50 text-xl focus:outline-none flex items-center">
+          {user ? (
+            user.avatar === 'default' ? (
+              <FontAwesomeIcon icon={faUserCircle} className="text-2xl" />
+            ) : (
+              <img src={`/avatars/${user.avatar}`} alt="User Avatar" className="w-8 h-8 rounded-full" onError={(e) => e.target.src='/avatars/default.png'} />
+            )
+          ) : (
+            <FontAwesomeIcon icon={faUser} />
+          )}
           {user && <span className="ml-2">{user.username}</span>}
         </Link>
         <ul className={`fixed top-0 left-0 w-full h-full bg-neutral-800 text-neutral-50 transition-transform duration-300 z-50 ${menuOpen ? 'block' : 'hidden'}`}>

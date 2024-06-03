@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // User Signup Route
 app.post('/signup', async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, avatar } = req.body;
 
   try {
     // Check if the user already exists
@@ -24,14 +24,13 @@ app.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword });
+    const newUser = await User.create({ username, email, password: hashedPassword, avatar });
     res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 
 // User Login Route
 app.post('/login', async (req, res) => {
@@ -56,14 +55,10 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-// Update user profile route
+// User Update Route
 app.put('/users/:id', async (req, res) => {
   const { id } = req.params;
-  const { username, email, password } = req.body;
+  const { username, email, password, avatar } = req.body;
 
   try {
     const user = await User.findByPk(id);
@@ -71,16 +66,24 @@ app.put('/users/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.username = username || user.username;
-    user.email = email || user.email;
     if (password) {
-      user.password = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
     }
 
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.avatar = avatar || user.avatar;
+
     await user.save();
+
     res.json({ user });
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

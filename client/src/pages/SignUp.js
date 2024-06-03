@@ -1,37 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Footer from '../components/Footer';
+import { UserContext } from '../contexts/UserContext';
+import avatars from '../data/avatars';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [avatar, setAvatar] = useState(avatars[0]);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/signup', { username, email, password });
-      console.log(response.data);
-      navigate('/login');
+      const response = await axios.post('http://localhost:3001/signup', { username, email, password, avatar });
+      setUser(response.data.user);
+      navigate('/');
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('Error signing up');
-      }
+      console.error('Error signing up', error);
+      alert('Error signing up. Please try again.');
     }
-  };
-
-  const closeErrorPopup = () => {
-    setErrorMessage('');
   };
 
   return (
     <div className="min-h-screen bg-neutral-900 text-neutral-50 flex flex-col justify-center items-center">
-      <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-      <div className="w-80">
+      <div className="w-full flex justify-end p-4">
+        <Link to="/" className="text-neutral-50 text-xl">
+          <FontAwesomeIcon icon={faTimes} />
+        </Link>
+      </div>
+      <div className="w-full max-w-sm bg-neutral-800 p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
         <input
           type="text"
           value={username}
@@ -53,6 +56,20 @@ const SignUp = () => {
           placeholder="Password"
           className="border p-2 mb-4 w-full bg-neutral-800 text-neutral-50"
         />
+        <div className="mb-4">
+          <label className="block mb-2">Select Avatar:</label>
+          <div className="flex flex-wrap">
+            {avatars.map((avatarOption, index) => (
+              <img
+                key={index}
+                src={`/avatars/${avatarOption}`}
+                alt={`Avatar ${index + 1}`}
+                className={`w-12 h-12 m-2 cursor-pointer ${avatar === avatarOption ? 'border-2 border-primary-500' : ''}`}
+                onClick={() => setAvatar(avatarOption)}
+              />
+            ))}
+          </div>
+        </div>
         <button onClick={handleSignUp} className="bg-purple-500 text-white py-2 px-4 rounded w-full">
           Sign Up
         </button>
@@ -60,16 +77,6 @@ const SignUp = () => {
           <Link to="/login" className="text-purple-500">Back to Login</Link>
         </div>
       </div>
-      {errorMessage && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded shadow-lg text-center">
-            <p className="text-red-600">{errorMessage}</p>
-            <button onClick={closeErrorPopup} className="mt-4 bg-purple-500 text-white py-2 px-4 rounded">
-              Close
-            </button>
-          </div>
-        </div>
-      )}
       <Footer />
     </div>
   );
