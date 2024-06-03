@@ -28,7 +28,7 @@ MonSec is the official online presence for Monash University's cybersecurity clu
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/monsec-website.git
+   git clone [https://github.com/yourusername/monsec-website.git](https://github.com/MRID0007/React-MonSec.git)
    cd monsec-website
    ```
 
