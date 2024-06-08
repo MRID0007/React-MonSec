@@ -45,7 +45,7 @@ const App = () => {
           <Route path="/Teams" element={<Teams />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/account" element={<Account />} />
+          <Route path="/account/*" element={<Account />} /> {/* Add a wildcard to match nested routes */}
           <Route path="/events" element={<Events />} />
         </Routes>
       </Router>

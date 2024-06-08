@@ -45,7 +45,7 @@ const events = [
     name: 'Future Event for Testing',
     date: '2024-12-31T18:00:00Z',
     price: 'Free',
-    image: '/assets/images/events/event1.png',
+    image: event1,
   },
 ];
 

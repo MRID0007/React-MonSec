@@ -130,21 +130,21 @@ app.get('/users/:id/events', async (req, res) => {
   }
 });
 
-// Event Cancel Route
-app.delete('/events/:eventId/cancel', async (req, res) => {
+// Event Leave Route
+app.delete('/events/:eventId/leave', async (req, res) => {
   const { userId } = req.body;
   const { eventId } = req.params;
 
   try {
     const eventSignup = await EventSignup.findOne({ where: { userId, eventId } });
-    if (!eventSignup) {
-      return res.status(404).json({ message: 'Event signup not found' });
+    if (eventSignup) {
+      await eventSignup.destroy();
+      res.json({ message: 'Successfully left the event' });
+    } else {
+      res.status(404).json({ message: 'Event signup not found' });
     }
-
-    await eventSignup.destroy();
-    res.status(200).json({ message: 'Event signup canceled' });
   } catch (error) {
-    console.error('Error canceling event signup:', error);
+    console.error('Error leaving event:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
