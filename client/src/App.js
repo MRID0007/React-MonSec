@@ -20,6 +20,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Account from './pages/Account';
 import Events from './pages/Events';
+import CTFChallenges from './pages/CTFChallenges';
 import { UserContextProvider } from './contexts/UserContext';
 
 const App = () => {
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/account/*" element={<Account />} /> {/* Add a wildcard to match nested routes */}
           <Route path="/events" element={<Events />} />
+          <Route path="/ctfchallenges" element={<CTFChallenges />} /> {/* Add the new route */}
         </Routes>
       </Router>
     </UserContextProvider>

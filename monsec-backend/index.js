@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { User, EventSignup, Event } = require('./models');
+const { User, EventSignup, Event, Challenge } = require('./models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
@@ -145,6 +145,74 @@ app.delete('/events/:eventId/leave', async (req, res) => {
     }
   } catch (error) {
     console.error('Error leaving event:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Challenges Routes
+app.get('/challenges', async (req, res) => {
+  try {
+    const challenges = await Challenge.findAll();
+    res.json(challenges);
+  } catch (error) {
+    console.error('Error fetching challenges:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.post('/challenges', async (req, res) => {
+  const { name, category, points, description, solves, likes, completed, bookmarked } = req.body;
+
+  try {
+    const challenge = await Challenge.create({ name, category, points, description, solves, likes, completed, bookmarked });
+    res.status(201).json(challenge);
+  } catch (error) {
+    console.error('Error creating challenge:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.put('/challenges/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, category, points, description, solves, likes, completed, bookmarked } = req.body;
+
+  try {
+    const challenge = await Challenge.findByPk(id);
+    if (!challenge) {
+      return res.status(404).json({ message: 'Challenge not found' });
+    }
+
+    challenge.name = name || challenge.name;
+    challenge.category = category || challenge.category;
+    challenge.points = points || challenge.points;
+    challenge.description = description || challenge.description;
+    challenge.solves = solves || challenge.solves;
+    challenge.likes = likes || challenge.likes;
+    challenge.completed = completed !== undefined ? completed : challenge.completed;
+    challenge.bookmarked = bookmarked !== undefined ? bookmarked : challenge.bookmarked;
+
+    await challenge.save();
+
+    res.json(challenge);
+  } catch (error) {
+    console.error('Error updating challenge:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.delete('/challenges/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const challenge = await Challenge.findByPk(id);
+    if (!challenge) {
+      return res.status(404).json({ message: 'Challenge not found' });
+    }
+
+    await challenge.destroy();
+    res.json({ message: 'Challenge deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting challenge:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
