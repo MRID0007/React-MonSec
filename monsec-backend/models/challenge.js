@@ -38,6 +38,18 @@ module.exports = (sequelize, DataTypes) => {
     author: {
       type: DataTypes.STRING,
       defaultValue: 'Sarah Lam'
+    },
+    flag: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    filePaths: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    hints: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {});
   Challenge.associate = function(models) {

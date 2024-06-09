@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faTimesCircle, faThumbsUp, faBookmark, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faTimesCircle, faThumbsUp, faBookmark, faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from 'react-modal';
@@ -17,6 +17,9 @@ const CTFChallenges = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [challenges, setChallenges] = useState([]);
+  const [flag, setFlag] = useState('');
+  const [flagResult, setFlagResult] = useState('');
+  const [showHints, setShowHints] = useState(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -33,10 +36,39 @@ const CTFChallenges = () => {
 
   const openModal = (challenge) => {
     setSelectedChallenge(challenge);
+    setShowHints(false); // Reset hints visibility
   };
 
   const closeModal = () => {
     setSelectedChallenge(null);
+    setFlag('');
+    setFlagResult('');
+  };
+
+  const handleFlagSubmit = async () => {
+    try {
+      const response = await axios.post(`http://localhost:3001/challenges/${selectedChallenge.id}/submit-flag`, { flag });
+      setFlagResult(response.data.message);
+    } catch (error) {
+      console.error('Error submitting flag:', error);
+      setFlagResult('Error submitting flag');
+    }
+  };
+
+  const handleFileDownload = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/challenges/${selectedChallenge.id}/download`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `challenge-${selectedChallenge.id}-files.zip`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error downloading files:', error);
+    }
   };
 
   const filteredChallenges = challenges
@@ -226,15 +258,22 @@ const CTFChallenges = () => {
           </div>
           <hr className="my-4" />
           <div className="mb-4 text-sm text-neutral-400">
-            <p>Author: Sarah Lam</p>
+            <p>Author: {selectedChallenge.author}</p>
           </div>
           <h3 className="text-xl font-bold mb-2">Description</h3>
           <p className="mb-4">{selectedChallenge.description}</p>
           <div className="text-xl font-bold mb-2">Hints</div>
-          <div className="flex space-x-2 mb-4">
-            <button className="bg-gray-700 text-white px-4 py-2 rounded">1</button>
-            <button className="bg-gray-700 text-white px-4 py-2 rounded">2</button>
-            <button className="bg-gray-700 text-white px-4 py-2 rounded">3</button>
+          <div className="flex flex-col space-y-2 mb-4">
+            <button
+              onClick={() => setShowHints(!showHints)}
+              className="bg-gray-700 text-white px-4 py-2 rounded flex items-center justify-between"
+            >
+              {showHints ? 'Hide Hints' : 'Show Hints'}
+              <FontAwesomeIcon icon={showHints ? faChevronUp : faChevronDown} className="ml-2" />
+            </button>
+            {showHints && selectedChallenge.hints?.split('\n').map((hint, index) => (
+              <div key={index} className="bg-gray-700 text-white px-4 py-2 rounded">{hint}</div>
+            ))}
           </div>
           <hr className="my-4" />
           <div className="bg-neutral-700 p-4 rounded mb-4">
@@ -244,13 +283,19 @@ const CTFChallenges = () => {
           <div className="flex items-center">
             <input
               type="text"
-              placeholder="MonSecCTF{FLAG}"
+              value={flag}
+              onChange={(e) => setFlag(e.target.value)}
+              placeholder="MONSEC{FLAG}"
               className="flex-1 border bg-neutral-800 text-white p-2 rounded mr-4"
             />
-            <button className="bg-blue-500 text-white py-2 px-4 rounded">
+            <button onClick={handleFlagSubmit} className="bg-blue-500 text-white py-2 px-4 rounded">
               Submit Flag
             </button>
           </div>
+          {flagResult && <p className="mt-4 text-sm text-neutral-400">{flagResult}</p>}
+          <button onClick={handleFileDownload} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+            Download Files
+          </button>
         </Modal>
       )}
     </div>

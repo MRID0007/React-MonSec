@@ -5,6 +5,8 @@ const { User, EventSignup, Event, Challenge } = require('./models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = 3001;
@@ -161,10 +163,10 @@ app.get('/challenges', async (req, res) => {
 });
 
 app.post('/challenges', async (req, res) => {
-  const { name, category, points, description, solves, likes, completed, bookmarked } = req.body;
+  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths } = req.body;
 
   try {
-    const challenge = await Challenge.create({ name, category, points, description, solves, likes, completed, bookmarked });
+    const challenge = await Challenge.create({ name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths });
     res.status(201).json(challenge);
   } catch (error) {
     console.error('Error creating challenge:', error);
@@ -174,7 +176,7 @@ app.post('/challenges', async (req, res) => {
 
 app.put('/challenges/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, category, points, description, solves, likes, completed, bookmarked } = req.body;
+  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths } = req.body;
 
   try {
     const challenge = await Challenge.findByPk(id);
@@ -186,10 +188,12 @@ app.put('/challenges/:id', async (req, res) => {
     challenge.category = category || challenge.category;
     challenge.points = points || challenge.points;
     challenge.description = description || challenge.description;
+    challenge.flag = flag || challenge.flag;
     challenge.solves = solves || challenge.solves;
     challenge.likes = likes || challenge.likes;
     challenge.completed = completed !== undefined ? completed : challenge.completed;
     challenge.bookmarked = bookmarked !== undefined ? bookmarked : challenge.bookmarked;
+    challenge.filePaths = filePaths || challenge.filePaths;
 
     await challenge.save();
 
@@ -213,6 +217,56 @@ app.delete('/challenges/:id', async (req, res) => {
     res.json({ message: 'Challenge deleted successfully' });
   } catch (error) {
     console.error('Error deleting challenge:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to verify the submitted flag
+app.post('/challenges/:id/submit-flag', async (req, res) => {
+  const { id } = req.params;
+  const { flag } = req.body;
+
+  try {
+    const challenge = await Challenge.findByPk(id);
+    if (!challenge) {
+      return res.status(404).json({ message: 'Challenge not found' });
+    }
+
+    if (challenge.flag === flag) {
+      return res.status(200).json({ message: 'Correct flag!' });
+    } else {
+      return res.status(400).json({ message: 'Incorrect flag' });
+    }
+  } catch (error) {
+    console.error('Error submitting flag:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to download files related to a challenge
+app.get('/challenges/:id/download', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const challenge = await Challenge.findByPk(id);
+    if (!challenge) {
+      return res.status(404).json({ message: 'Challenge not found' });
+    }
+
+    const filePath = challenge.filePaths;
+    if (!filePath) {
+      return res.status(404).json({ message: 'No files available for download' });
+    }
+
+    const fullPath = path.resolve(__dirname, filePath);
+    if (fs.existsSync(fullPath)) {
+      res.download(fullPath);
+    } else {
+      console.error(`File not found: ${fullPath}`);
+      res.status(404).json({ message: 'File not found' });
+    }
+  } catch (error) {
+    console.error('Error downloading files:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
