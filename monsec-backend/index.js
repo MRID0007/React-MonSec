@@ -26,7 +26,7 @@ app.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword, avatar });
+    const newUser = await User.create({ username, email, password: hashedPassword, avatar, ctfScore: 0 });
     const token = jwt.sign({ id: newUser.id }, 'your_jwt_secret', { expiresIn: '1h' });
     res.status(201).json({ message: 'User created successfully', user: newUser, token });
   } catch (error) {
@@ -54,6 +54,20 @@ app.post('/login', async (req, res) => {
     res.json({ token, user });
   } catch (error) {
     console.error('Error during login:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get current user details
+app.get('/users/me', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user details:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -163,10 +177,10 @@ app.get('/challenges', async (req, res) => {
 });
 
 app.post('/challenges', async (req, res) => {
-  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths } = req.body;
+  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths, hints } = req.body;
 
   try {
-    const challenge = await Challenge.create({ name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths });
+    const challenge = await Challenge.create({ name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths, hints });
     res.status(201).json(challenge);
   } catch (error) {
     console.error('Error creating challenge:', error);
@@ -176,7 +190,7 @@ app.post('/challenges', async (req, res) => {
 
 app.put('/challenges/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths } = req.body;
+  const { name, category, points, description, flag, solves, likes, completed, bookmarked, filePaths, hints } = req.body;
 
   try {
     const challenge = await Challenge.findByPk(id);
@@ -194,6 +208,7 @@ app.put('/challenges/:id', async (req, res) => {
     challenge.completed = completed !== undefined ? completed : challenge.completed;
     challenge.bookmarked = bookmarked !== undefined ? bookmarked : challenge.bookmarked;
     challenge.filePaths = filePaths || challenge.filePaths;
+    challenge.hints = hints || challenge.hints;
 
     await challenge.save();
 
@@ -224,7 +239,7 @@ app.delete('/challenges/:id', async (req, res) => {
 // Endpoint to verify the submitted flag
 app.post('/challenges/:id/submit-flag', async (req, res) => {
   const { id } = req.params;
-  const { flag } = req.body;
+  const { flag, userId } = req.body;
 
   try {
     const challenge = await Challenge.findByPk(id);
@@ -233,7 +248,15 @@ app.post('/challenges/:id/submit-flag', async (req, res) => {
     }
 
     if (challenge.flag === flag) {
-      return res.status(200).json({ message: 'Correct flag!' });
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.ctfScore = (user.ctfScore || 0) + challenge.points;
+      await user.save();
+
+      return res.status(200).json({ message: 'Correct flag!', newScore: user.ctfScore });
     } else {
       return res.status(400).json({ message: 'Incorrect flag' });
     }
@@ -274,3 +297,5 @@ app.get('/challenges/:id/download', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = app; // Export the app for testing or further usage

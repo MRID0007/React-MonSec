@@ -1,15 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faTimesCircle, faThumbsUp, faBookmark, faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faTimesCircle, faThumbsUp, faBookmark, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from 'react-modal';
 import { CSSTransition } from 'react-transition-group';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CTFChallenges = () => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [hideSolved, setHideSolved] = useState(false);
@@ -19,9 +20,14 @@ const CTFChallenges = () => {
   const [challenges, setChallenges] = useState([]);
   const [flag, setFlag] = useState('');
   const [flagResult, setFlagResult] = useState('');
-  const [showHints, setShowHints] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     const fetchChallenges = async () => {
       try {
         const response = await axios.get('http://localhost:3001/challenges');
@@ -32,11 +38,10 @@ const CTFChallenges = () => {
     };
 
     fetchChallenges();
-  }, []);
+  }, [user, navigate]);
 
   const openModal = (challenge) => {
     setSelectedChallenge(challenge);
-    setShowHints(false); // Reset hints visibility
   };
 
   const closeModal = () => {
@@ -47,8 +52,14 @@ const CTFChallenges = () => {
 
   const handleFlagSubmit = async () => {
     try {
-      const response = await axios.post(`http://localhost:3001/challenges/${selectedChallenge.id}/submit-flag`, { flag });
+      const response = await axios.post(`http://localhost:3001/challenges/${selectedChallenge.id}/submit-flag`, {
+        flag,
+        userId: user.id,
+      });
       setFlagResult(response.data.message);
+      if (response.data.newScore !== undefined) {
+        setUser({ ...user, ctfScore: response.data.newScore });
+      }
     } catch (error) {
       console.error('Error submitting flag:', error);
       setFlagResult('Error submitting flag');
@@ -99,7 +110,7 @@ const CTFChallenges = () => {
             </div>
           )}
         </div>
-        <div className="absolute left-0 top-24"> {/* Adjusted position */}
+        <div className="absolute left-0 top-24">
           <button
             className={`filter-tab ${filterOpen ? 'open' : ''}`}
             onClick={() => setFilterOpen(!filterOpen)}
@@ -203,7 +214,7 @@ const CTFChallenges = () => {
                     <div
                       key={index}
                       className="bg-neutral-700 p-6 rounded-lg shadow-md cursor-pointer hover:bg-neutral-600 relative flex flex-col justify-center"
-                      style={{ height: '250px' }}  // Adjust the height here
+                      style={{ height: '250px' }}
                       onClick={() => openModal(challenge)}
                     >
                       <div className="absolute top-4 left-4 text-neutral-400">
@@ -264,15 +275,11 @@ const CTFChallenges = () => {
           <p className="mb-4">{selectedChallenge.description}</p>
           <div className="text-xl font-bold mb-2">Hints</div>
           <div className="flex flex-col space-y-2 mb-4">
-            <button
-              onClick={() => setShowHints(!showHints)}
-              className="bg-gray-700 text-white px-4 py-2 rounded flex items-center justify-between"
-            >
-              {showHints ? 'Hide Hints' : 'Show Hints'}
-              <FontAwesomeIcon icon={showHints ? faChevronUp : faChevronDown} className="ml-2" />
-            </button>
-            {showHints && selectedChallenge.hints?.split('\n').map((hint, index) => (
-              <div key={index} className="bg-gray-700 text-white px-4 py-2 rounded">{hint}</div>
+            {selectedChallenge.hints?.split('\n').map((hint, index) => (
+              <details key={index} className="bg-gray-700 text-white px-4 py-2 rounded">
+                <summary className="cursor-pointer">Hint {index + 1}</summary>
+                <p className="mt-2">{hint}</p>
+              </details>
             ))}
           </div>
           <hr className="my-4" />

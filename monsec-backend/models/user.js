@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     ctfRanking: DataTypes.INTEGER,
     avatar: DataTypes.STRING,
+    ctfScore: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0, // Set default value to 0
+    }
   }, {
     sequelize,
     modelName: 'User',
