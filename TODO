@@ -1,0 +1,16 @@
+1. Move System to Docker for Portability
+
+2. Set up Auth0 API, for the following:
+a. Allow for pushing new CTFs to app
+b. Allow for pushing new Events to app
+c. Be able to call stats from admin panel to see leaderboard and progress
+
+3. Create admin panel with following features:
+a. See user stats
+b. See user specific leaderboard
+c. Be able to change user details
+
+4. Fix backend:
+a. Be able to call events correctly and add them to user profiles
+b. Be able to complete CTFs and add to user score
+c. Store user details, removing PW.

@@ -8,8 +8,10 @@ import Modal from 'react-modal';
 import { CSSTransition } from 'react-transition-group';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const CTFChallenges = () => {
+  const { user: auth0User, isAuthenticated } = useAuth0();
   const { user, setUser } = useContext(UserContext);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -23,7 +25,7 @@ const CTFChallenges = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
@@ -38,7 +40,7 @@ const CTFChallenges = () => {
     };
 
     fetchChallenges();
-  }, [user, navigate]);
+  }, [isAuthenticated, navigate]);
 
   const openModal = (challenge) => {
     setSelectedChallenge(challenge);
